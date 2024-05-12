@@ -1,4 +1,4 @@
-const CORE_API_PROD = 'https://packaging-api.infoacademie.com';
+const CORE_API_PROD = 'https://bank-api.dev-solus.com';
 
 
 export const environment = {
