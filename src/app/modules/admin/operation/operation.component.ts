@@ -1,5 +1,6 @@
-import { Component, ViewChild, Signal, AfterViewInit, ChangeDetectionStrategy, inject, viewChild } from '@angular/core';
+import { Component, ViewChild, Signal, AfterViewInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { merge, Subject, switchMap, filter, map, startWith, tap, delay, catchError } from 'rxjs';
+import { Operation } from 'app/core/api';
 import { UowService, TypeForm } from 'app/core/http-services/uow.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -14,15 +15,16 @@ import { FuseAlertComponent } from '@fuse/components/alert';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { UpdateComponent } from './update/update.component';
-import { MatDialog } from '@angular/material/dialog';
-import { Role } from 'app/core/api';
+
+
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+
 
 
 @Component({
     standalone: true,
-    selector: 'app-role',
-    templateUrl: './role.component.html',
+    selector: 'app-operation',
+    templateUrl: './operation.component.html',
     styles: [``],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -39,35 +41,36 @@ import { Role } from 'app/core/api';
         MatSelectModule,
         MatIconModule,
         MatProgressSpinnerModule,
+
+
+        RouterLink,
     ],
 })
-export class RoleComponent implements AfterViewInit {
+export class OperationComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
+    readonly router = inject(Router);
+    readonly route = inject(ActivatedRoute);
 
 
-    readonly dialog = inject(MatDialog);
-
-    @ViewChild(MatPaginator, { static: false })
+    @ViewChild(MatPaginator, { static: true })
     readonly paginator: MatPaginator;
-    @ViewChild(MatSort, { static: false })
+    @ViewChild(MatSort, { static: true })
     readonly sort: MatSort;
-
-    // readonly paginator = viewChild.required<MatPaginator>('paginator')();
-    // readonly sort = viewChild.required<MatSort>(MatSort)();
-
 
     readonly update = new Subject<number>();
 
     public isLoadingResults = true;
     public totalRecords = 0;
 
-    readonly delete$ = new Subject<Role>();
+    readonly showMessage$ = new Subject<any>();
+
+    readonly delete$ = new Subject<Operation>();
     readonly #delete$ = this.delete$.pipe(
-        switchMap(item => this.uow.fuseConfirmation.open({ message: 'Role' }).afterClosed().pipe(
+        switchMap(item => this.uow.fuseConfirmation.open({ message: 'Operation' }).afterClosed().pipe(
             filter((e: 'confirmed' | 'cancelled') => e === 'confirmed'),
             tap(e => console.warn(e)),
-            switchMap(_ => this.uow.core.roles.delete(item.id).pipe(
+            switchMap(_ => this.uow.core.operations.delete(item.id).pipe(
                 catchError(this.uow.handleError),
                 map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
                 tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
@@ -75,9 +78,17 @@ export class RoleComponent implements AfterViewInit {
         )),
     );
 
+    // select
+    readonly accounts$ = this.uow.core.accounts.getForSelect$;
+    readonly accountDists$ = this.uow.core.accounts.getForSelect$;
+
+    readonly operationType = new FormControl('');
+    readonly accountId = new FormControl(0);
+    readonly accountDistId = new FormControl(0);
+
     readonly viewInitDone = new Subject<void>();
-    readonly dataSource = this.viewInitDone.pipe(
-        // delay(100),
+    readonly dataSource: Signal<(Operation)[]> = toSignal(this.viewInitDone.pipe(
+        delay(50),
         switchMap(_ => merge(
             this.sort.sortChange,
             this.paginator.page,
@@ -86,26 +97,21 @@ export class RoleComponent implements AfterViewInit {
         )),
         startWith(null as any),
         map(_ => [
-            (this.paginator?.pageIndex || 0) ,// * (this.paginator?.pageSize ?? 10),// startIndex
+            (this.paginator?.pageIndex || 0),
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
-            this.name.value === '' ? '*' : this.name.value,
+            this.operationType.value === '' ? '*' : this.operationType.value,
+            this.accountId.value,
+            this.accountDistId.value,
         ]),
         tap(e => this.isLoadingResults = true),
-        switchMap(e => this.uow.core.roles.getList(e).pipe(
+        switchMap(e => this.uow.core.operations.getList(e).pipe(
             tap(e => this.totalRecords = e.count),
             map(e => e.list))
         ),
         tap(e => this.isLoadingResults = false),
-    );
-
-    readonly showMessage$ = new Subject<any>();
-
-    // select
-
-
-    readonly name = new FormControl('');
+    ), { initialValue: [] }) as any;
 
     ngAfterViewInit(): void {
         this.viewInitDone.next();
@@ -116,7 +122,9 @@ export class RoleComponent implements AfterViewInit {
     }
 
     reset() {
-        this.name.setValue('');
+        this.operationType.setValue('');
+        this.accountId.setValue(0);
+        this.accountDistId.setValue(0);
 
         this.update.next(0);
     }
@@ -125,35 +133,16 @@ export class RoleComponent implements AfterViewInit {
         this.update.next(0);
     }
 
-    openDialog(o: Role, text) {
-        const dialogRef = this.dialog.open(UpdateComponent, {
-            // width: '1100px',
-            disableClose: true,
-            data: { model: o, title: text }
-        });
-
-        return dialogRef.afterClosed();
-    };
 
     add() {
-
-        this.openDialog({} as Role, 'Ajouter Role').subscribe(result => {
-            if (result) {
-                this.update.next(0);
-            }
-        });
+        this.router.navigate(['/admin/operation', 0]);
     }
 
-    edit(o: Role) {
-
-        this.openDialog(o, 'Modifier Role').subscribe((result: Role) => {
-            if (result) {
-                this.update.next(0);
-            }
-        });
+    edit(o: Operation) {
+        this.router.navigate(['/admin/operation', o.id]);
     }
 
-    remove(o: Role) {
+    remove(o: Operation) {
         this.delete$.next(o);
     }
 

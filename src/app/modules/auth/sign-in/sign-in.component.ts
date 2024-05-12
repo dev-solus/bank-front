@@ -60,6 +60,7 @@ export class AuthSignInComponent {
         tap(_ => this.myForm.markAllAsTouched()),
         filter(e => this.myForm.valid),
         tap(e => this.myForm.disable()),
+        tap(e => this.uow.session.token = ''),
         map(_ => this.myForm.getRawValue()),
         switchMap(o => this.uow.core.auth.login(o).pipe(
             catchError(this.uow.handleError),

@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UpdateComponent } from './update/update.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     standalone: true,
@@ -43,7 +44,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class AccountComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
-
+    readonly route = inject(ActivatedRoute);
 
     readonly dialog = inject(MatDialog);
 
@@ -75,10 +76,12 @@ export class AccountComponent implements AfterViewInit {
     // select
     readonly users$ = this.uow.core.users.getForSelect$;
 
+    readonly userIdParams = +this.route.snapshot.queryParamMap.get('userId');
+
     readonly accountNumber = new FormControl('');
     readonly balanceMin = new FormControl(0);
     readonly balanceMax = new FormControl(0);
-    readonly userId = new FormControl(0);
+    readonly userId = new FormControl(this.userIdParams);
 
     readonly viewInitDone = new Subject<void>();
     readonly dataSource: Signal<(Account)[]> = toSignal(this.viewInitDone.pipe(
@@ -91,7 +94,7 @@ export class AccountComponent implements AfterViewInit {
         )),
         startWith(null as any),
         map(_ => [
-            (this.paginator?.pageIndex || 0) * (this.paginator?.pageSize ?? 10),// startIndex
+            (this.paginator?.pageIndex || 0),// * (this.paginator?.pageSize ?? 10),// startIndex
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',

@@ -7,7 +7,7 @@
             <!-- Title -->
             <div class="mt-2 flex justify-between items-center">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    Users
+                    Operations
                 </h2>
 
                 <div class="flex gap-1">
@@ -32,17 +32,23 @@
         <!-- Title -->
         <div class="grid md:grid-cols-4 gap-2">
             <mat-form-field appearance="fill">
-                <input matInput (keyup.enter)="search()" placeholder="Prénom" [formControl]="firstname" required>
+                <input matInput (keyup.enter)="search()" placeholder="Type" [formControl]="operationType" required>
+            </mat-form-field>
+
+
+            <mat-form-field appearance="fill">
+                <mat-select [formControl]="accountId" [placeholder]="'Sélectionnez une option'">
+                    <mat-option [value]="0">Compte Source</mat-option>
+                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.name}}</mat-option>
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <input matInput (keyup.enter)="search()" placeholder="CIN" [formControl]="cin" required>
+                <mat-select [formControl]="accountDistId" [placeholder]="'Sélectionnez une option'">
+                    <mat-option [value]="0">Account Destination</mat-option>
+                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.name}}</mat-option>
+                </mat-select>
             </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <input matInput (keyup.enter)="search()" placeholder="email" [formControl]="email" required>
-            </mat-form-field>
-
 
             <ng-container class="flex gap-1 w-80">
                 <button mat-raised-button (click)="reset()">
@@ -73,50 +79,40 @@
                 <ng-container>
                     <div class="">
                         <!-- Header -->
-                        <div class="grid grid-cols-1 md:grid-cols-11 z-10 sticky top-0 gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5 "
+                        <div class="grid grid-cols-1 md:grid-cols-8 z-10 sticky top-0 gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5 "
                             matSort matSortDisableClear>
+
+
+
                             <div>id</div>
-                            <div class="col-span-2">Nom complet</div>
-                            <div>CIN</div>
-                            <div>email</div>
-                            <div>Téléphone</div>
-                            <div>Genre</div>
-                            <div>role</div>
-                            <div>Actif</div>
+                            <div>Type</div>
+                            <div>Description</div>
+                            <div>amount</div>
+                            <div>Date</div>
+                            <div>Compte Source</div>
+                            <div>Account Destination</div>
+
                             <div>Action</div>
                         </div>
                         <!-- Rows -->
 
                         <ng-container *ngFor="let e of dataSource(); let i=index; trackBy: trackById">
-                            <div class="grid grid-cols-1 md:grid-cols-11 items-center gap-4 py-3 px-6 md:px-8 border-b">
+                            <div class="grid grid-cols-1 md:grid-cols-8 items-center gap-4 py-3 px-6 md:px-8 border-b">
 
                                 <div class="truncate">{{e.id}}</div>
-                                <div class=" col-span-2">{{e.firstname}} {{e.lastname}}</div>
-                                <div class="truncate">{{e.cin}}</div>
-                                <div class="truncate">{{e.email}}</div>
-                                <div class="truncate">{{e.phone}}</div>
-                                <div class="truncate">{{e.gender}}</div>
-                                <div class="truncate">{{e.role?.name ?? '-'}}</div>
-                                <div class="truncate">
-                                    <div class="py-0.5 px-3 rounded-full text-sm font-semibold w-fit"
-                                        style="width: fit-content;"
-                                        [ngClass]="{ 'text-green-800 bg-green-100 dark:text-green-50 dark:bg-green-700 w-fit' : e?.active ,
-                                                        'text-red-800 bg-red-100 dark:text-red-50 dark:bg-red-700 w-fit' : !e?.active }">
-                                        {{e?.active}}
-                                    </div>
-                                </div>
-                                <div class="flex gap-2 col-span-2">
-                                    <button class="min-w-10 min-h-7 h-7 leading-6" mat-stroked-button
+                                <div class="truncate">{{e.operationType}}</div>
+                                <div class="truncate">{{e.description}}</div>
+                                <div class="truncate">{{e.amount}}</div>
+                                <div class="truncate">{{e.date | date: "dd/MM/yyyy, HH:mm"}}</div>
+                                <div class="truncate">{{e.accountDebit?.accountNumber ?? '-'}}</div>
+                                <div class="truncate">{{e.accountCredit?.accountNumber ?? '-'}}</div>
+                                <div>
+                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
                                         matTooltip="Go to Edit form" (click)="edit(e)">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:pencil' ">
                                         </mat-icon>
                                     </button>
-                                    <button class="min-w-10 min-h-7 h-7 leading-6" mat-stroked-button
-                                        matTooltip="Go to " (click)="account(e)">
-                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:banknotes'">
-                                        </mat-icon>
-                                    </button>
-                                    <button class="min-w-10 min-h-7 h-7 leading-6" mat-stroked-button
+                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6 ml-2" mat-stroked-button
                                         matTooltip="Delete this item" (click)="remove(e)">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:trash' ">
                                         </mat-icon>

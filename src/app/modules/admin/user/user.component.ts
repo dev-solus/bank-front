@@ -94,7 +94,7 @@ export class UserComponent implements AfterViewInit {
         )),
         startWith(null as any),
         map(_ => [
-            (this.paginator?.pageIndex || 0) * (this.paginator?.pageSize ?? 10),// startIndex
+            (this.paginator?.pageIndex || 0) ,// * (this.paginator?.pageSize ?? 10),// startIndex
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
@@ -143,6 +143,11 @@ export class UserComponent implements AfterViewInit {
     remove(o: User) {
         this.delete$.next(o);
     }
+
+    account(o: User) {
+        this.router.navigate(['/admin/account'], { queryParams: { userId: o.id } });
+    }
+
 
 
 }

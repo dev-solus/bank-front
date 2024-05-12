@@ -48,6 +48,7 @@ export const appRoutes: Route[] = [
             { path: '', pathMatch: 'full', redirectTo: 'product' },
             { path: 'user', loadChildren: () => import('app/modules/admin/user/user.routes') },
             { path: 'account', loadChildren: () => import('app/modules/admin/account/account.routes') },
+            { path: 'operation', loadChildren: () => import('app/modules/admin/operation/operation.routes') },
             { path: 'role', loadChildren: () => import('app/modules/admin/role/role.routes') },
         ]
     }

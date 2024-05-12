@@ -19,7 +19,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         link: '/admin/account',
     },
-
+    {
+        id: 'operation',
+        title: 'Operation',
+        subtitle: 'Gestion des operation',
+        icon: 'heroicons_outline:cog',
+        type: 'basic',
+        link: '/admin/operation',
+    },
     {
         id: 'settings',
         title: 'Settings',

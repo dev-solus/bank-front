@@ -1,0 +1,99 @@
+
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Title -->
+            <div class="flex gap-3 mt-2">
+                <button mat-icon-button routerLink="../"><mat-icon>arrow_back</mat-icon></button>
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    Operation
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="w-full p-6 sm:p-10">
+        <ng-container [ngTemplateOutlet]="formTemplate" [ngTemplateOutletContext]="{$implicit:myForm}"></ng-container>
+
+        <ng-container *ngIf="showMessage$ | async as e">
+            <fuse-alert class="w-full my-5" [@shake]="true" [type]="e.code < 0 ? 'warn' : 'success'"
+                [appearance]="'border'">
+                <span fuseAlertTitle>Message</span>
+                {{e.message}}
+            </fuse-alert>
+        </ng-container>
+
+        <div class="w-full flex justify-between mt-10">
+            <button mat-raised-button (click)="back()">Retour</button>
+            <button mat-raised-button [disabled]="!myForm.dirty" color="primary" (click)="submit(myForm.getRawValue())" >
+                <span *ngIf="!myForm.disabled">
+                    Enregistrer
+                </span>
+                <mat-progress-spinner *ngIf="myForm.disabled" [diameter]="24" [mode]="'indeterminate'">
+                </mat-progress-spinner>
+            </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #formTemplate let-myForm>
+    <form [formGroup]="myForm" >
+    <div class="grid md:grid-cols-2 gap-5">
+    <mat-form-field appearance="fill">
+                <mat-label>Type</mat-label>
+                <input matInput formControlName="operationType" type="text" required>
+                <mat-error *ngIf="myForm.controls.operationType.invalid && (myForm.controls.operationType.dirty || myForm.controls.operationType.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+<mat-form-field appearance="fill">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description" type="text" required>
+                <mat-error *ngIf="myForm.controls.description.invalid && (myForm.controls.description.dirty || myForm.controls.description.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>amount</mat-label>
+                <input matInput formControlName="amount" type="undefined" required>
+                <mat-error *ngIf="myForm.controls.amount.invalid && (myForm.controls.amount.dirty || myForm.controls.amount.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Date</mat-label>
+                <input matInput formControlName="date" [matDatepicker]="picker3">
+                <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                <mat-datepicker #picker3></mat-datepicker>
+                <mat-error *ngIf="myForm.controls.date.invalid && (myForm.controls.date.dirty || myForm.controls.date.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Compte Source</mat-label>
+                <mat-select formControlName="accountId">
+                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.accountNumber}}</mat-option>
+                </mat-select>
+                 <mat-error *ngIf="myForm.controls.accountId.invalid && (myForm.controls.accountId.dirty || myForm.controls.accountId.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Account Destination</mat-label>
+                <mat-select formControlName="accountDistId">
+                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.accountNumber}}</mat-option>
+                </mat-select>
+                 <mat-error *ngIf="myForm.controls.accountDistId.invalid && (myForm.controls.accountDistId.dirty || myForm.controls.accountDistId.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+    </div>
+</form>
+</ng-template>

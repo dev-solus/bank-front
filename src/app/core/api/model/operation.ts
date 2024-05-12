@@ -9,6 +9,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Account } from './account';
 
 
 export interface Operation { 
@@ -17,6 +18,8 @@ export interface Operation {
     description?: string;
     amount?: number;
     date?: string;
+    accountDebit?: Account;
+    accountCredit?: Account;
     accountDebit_id?: number;
     accountCredit_id?: number;
 }
