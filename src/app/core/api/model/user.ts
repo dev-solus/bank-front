@@ -10,7 +10,6 @@
  * Do not edit the class manually.
  */
 import { Role } from './role';
-import { Account } from './account';
 
 
 export interface User { 
@@ -28,6 +27,5 @@ export interface User {
     active?: boolean;
     role?: Role;
     role_id?: number;
-    accounts?: Set<Account>;
 }
 

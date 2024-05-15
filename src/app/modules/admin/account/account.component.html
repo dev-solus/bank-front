@@ -7,7 +7,7 @@
             <!-- Title -->
             <div class="mt-2 flex justify-between items-center">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    Compte Bancaire
+                    Compte Bancaire <span *ngIf="!!user()">({{user().firstname}} {{user().lastname}} : {{user().cin}})</span>
                 </h2>
 
                 <div class="flex gap-1">
@@ -32,7 +32,7 @@
         <!-- Title -->
         <div class="grid md:grid-cols-4 gap-2">
             <mat-form-field appearance="fill">
-                <input matInput (keyup.enter)="search()" placeholder="Numéro de compte" [formControl]="accountNumber"
+                <input matInput (keyup.enter)="search()" placeholder="CIN" [formControl]="cin"
                     required>
             </mat-form-field>
 
@@ -50,7 +50,7 @@
             <mat-form-field appearance="fill">
                 <mat-select [formControl]="userId" [placeholder]="'Sélectionnez une option'">
                     <mat-option [value]="0">Propriétaire</mat-option>
-                    <mat-option *ngFor="let e of users$ | async" [value]="e.id">{{e.name}}</mat-option>
+                    <mat-option *ngFor="let e of users()" [value]="e.id">{{e.name}}</mat-option>
                 </mat-select>
             </mat-form-field>
 
@@ -83,13 +83,13 @@
                 <ng-container>
                     <div class="">
                         <!-- Header -->
-                        <div class="grid grid-cols-1 md:grid-cols-6 z-10 sticky top-0 gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5 "
+                        <div class="grid grid-cols-1 md:grid-cols-7 z-10 sticky top-0 gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5 "
                             matSort matSortDisableClear>
 
 
 
                             <div mat-sort-header="id">id</div>
-                            <div>Propriétaire</div>
+                            <div class="col-span-2">Propriétaire</div>
                             <div mat-sort-header="accountNumber">Numéro de compte</div>
                             <div mat-sort-header="balance">Solde</div>
                             <div mat-sort-header="status">Statut</div>
@@ -99,10 +99,10 @@
                         <!-- Rows -->
 
                         <ng-container *ngFor="let e of dataSource(); let i=index; trackBy: trackById">
-                            <div class="grid grid-cols-1 md:grid-cols-6 items-center gap-4 py-3 px-6 md:px-8 border-b">
+                            <div class="grid grid-cols-1 md:grid-cols-7 items-center gap-4 py-3 px-6 md:px-8 border-b">
 
                                 <div class="truncate">{{e.id}}</div>
-                                <div class="truncate">{{e.user?.firstname ?? '-'}} {{e.user?.lastname ?? '-'}}</div>
+                                <div class="col-span-2">{{$any(e).user?.firstname ?? '-'}} {{$any(e).user?.lastname ?? '-'}} ({{$any(e).user.cin}})</div>
                                 <div class="truncate">{{e.accountNumber}}</div>
                                 <div class="truncate">{{e.balance}}</div>
                                 <div class="truncate">

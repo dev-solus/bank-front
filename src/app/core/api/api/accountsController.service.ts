@@ -343,21 +343,21 @@ export class AccountsControllerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
+    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
+    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
+    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (startIndex === null || startIndex === undefined) {
-            throw new Error('Required parameter startIndex was null or undefined when calling getAll5.');
+            throw new Error('Required parameter startIndex was null or undefined when calling getAll6.');
         }
         if (pageSize === null || pageSize === undefined) {
-            throw new Error('Required parameter pageSize was null or undefined when calling getAll5.');
+            throw new Error('Required parameter pageSize was null or undefined when calling getAll6.');
         }
         if (sortBy === null || sortBy === undefined) {
-            throw new Error('Required parameter sortBy was null or undefined when calling getAll5.');
+            throw new Error('Required parameter sortBy was null or undefined when calling getAll6.');
         }
         if (sortDir === null || sortDir === undefined) {
-            throw new Error('Required parameter sortDir was null or undefined when calling getAll5.');
+            throw new Error('Required parameter sortDir was null or undefined when calling getAll6.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -409,40 +409,40 @@ export class AccountsControllerService {
      * @param pageSize 
      * @param sortBy 
      * @param sortDir 
-     * @param accountNumber 
+     * @param cin 
      * @param balanceMin 
      * @param balanceMax 
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountNumber: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
-    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountNumber: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
-    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountNumber: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
-    public getAll6(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountNumber: string, balanceMin: number, balanceMax: number, userId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAll7(startIndex: number, pageSize: number, sortBy: string, sortDir: string, cin: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
+    public getAll7(startIndex: number, pageSize: number, sortBy: string, sortDir: string, cin: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
+    public getAll7(startIndex: number, pageSize: number, sortBy: string, sortDir: string, cin: string, balanceMin: number, balanceMax: number, userId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
+    public getAll7(startIndex: number, pageSize: number, sortBy: string, sortDir: string, cin: string, balanceMin: number, balanceMax: number, userId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (startIndex === null || startIndex === undefined) {
-            throw new Error('Required parameter startIndex was null or undefined when calling getAll6.');
+            throw new Error('Required parameter startIndex was null or undefined when calling getAll7.');
         }
         if (pageSize === null || pageSize === undefined) {
-            throw new Error('Required parameter pageSize was null or undefined when calling getAll6.');
+            throw new Error('Required parameter pageSize was null or undefined when calling getAll7.');
         }
         if (sortBy === null || sortBy === undefined) {
-            throw new Error('Required parameter sortBy was null or undefined when calling getAll6.');
+            throw new Error('Required parameter sortBy was null or undefined when calling getAll7.');
         }
         if (sortDir === null || sortDir === undefined) {
-            throw new Error('Required parameter sortDir was null or undefined when calling getAll6.');
+            throw new Error('Required parameter sortDir was null or undefined when calling getAll7.');
         }
-        if (accountNumber === null || accountNumber === undefined) {
-            throw new Error('Required parameter accountNumber was null or undefined when calling getAll6.');
+        if (cin === null || cin === undefined) {
+            throw new Error('Required parameter cin was null or undefined when calling getAll7.');
         }
         if (balanceMin === null || balanceMin === undefined) {
-            throw new Error('Required parameter balanceMin was null or undefined when calling getAll6.');
+            throw new Error('Required parameter balanceMin was null or undefined when calling getAll7.');
         }
         if (balanceMax === null || balanceMax === undefined) {
-            throw new Error('Required parameter balanceMax was null or undefined when calling getAll6.');
+            throw new Error('Required parameter balanceMax was null or undefined when calling getAll7.');
         }
         if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling getAll6.');
+            throw new Error('Required parameter userId was null or undefined when calling getAll7.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -476,7 +476,7 @@ export class AccountsControllerService {
             }
         }
 
-        let localVarPath = `/api/accounts/getAll/${this.configuration.encodeParam({name: "startIndex", value: startIndex, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "pageSize", value: pageSize, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "sortBy", value: sortBy, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "sortDir", value: sortDir, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "accountNumber", value: accountNumber, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "balanceMin", value: balanceMin, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "balanceMax", value: balanceMax, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "userId", value: userId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
+        let localVarPath = `/api/accounts/getAll/${this.configuration.encodeParam({name: "startIndex", value: startIndex, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "pageSize", value: pageSize, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "sortBy", value: sortBy, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "sortDir", value: sortDir, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "cin", value: cin, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "balanceMin", value: balanceMin, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "balanceMax", value: balanceMax, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}/${this.configuration.encodeParam({name: "userId", value: userId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
         return this.httpClient.request<object>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

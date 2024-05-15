@@ -1,6 +1,6 @@
-import { Component, ViewChild, Signal, AfterViewInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ViewChild, Signal, AfterViewInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { merge, Subject, switchMap, filter, map, startWith, tap, delay, catchError } from 'rxjs';
-import { Account } from 'app/core/api';
+import { Account, User } from 'app/core/api';
 import { UowService, TypeForm } from 'app/core/http-services/uow.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -73,15 +73,20 @@ export class AccountComponent implements AfterViewInit {
         )),
     );
 
-    // select
-    readonly users$ = this.uow.core.users.getForSelect$;
-
     readonly userIdParams = +this.route.snapshot.queryParamMap.get('userId');
 
-    readonly accountNumber = new FormControl('');
+    // select
+    readonly users = toSignal(this.uow.core.users.getForSelect$.pipe(
+        // tap(users => this.user.set(!!this.userIdParams ? users.find(e => e.id === this.userIdParams)?.name : ''))
+    ));
+
+
+    readonly cin = new FormControl('');
     readonly balanceMin = new FormControl(0);
     readonly balanceMax = new FormControl(0);
     readonly userId = new FormControl(this.userIdParams);
+
+    readonly user = signal<User>(null)
 
     readonly viewInitDone = new Subject<void>();
     readonly dataSource: Signal<(Account)[]> = toSignal(this.viewInitDone.pipe(
@@ -98,7 +103,7 @@ export class AccountComponent implements AfterViewInit {
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
-            this.accountNumber.value === '' ? '*' : this.accountNumber.value,
+            this.cin.value === '' ? '*' : this.cin.value,
             this.balanceMin.value,
             this.balanceMax.value,
             this.userId.value,
@@ -106,8 +111,9 @@ export class AccountComponent implements AfterViewInit {
         tap(e => this.isLoadingResults = true),
         switchMap(e => this.uow.core.accounts.getList(e).pipe(
             tap(e => this.totalRecords = e.count),
-            map(e => e.list))
-        ),
+            map(e => e.list),
+            tap(list =>!this.userIdParams ? null : this.user.set((list.find(e => e.user_id === this.userIdParams) as any)?.user))
+        )),
         tap(e => this.isLoadingResults = false),
     ), { initialValue: [] }) as any;
 
@@ -120,7 +126,7 @@ export class AccountComponent implements AfterViewInit {
     }
 
     reset() {
-        this.accountNumber.setValue('');
+        this.cin.setValue('');
         this.balanceMin.setValue(0);
         this.balanceMax.setValue(0);
         this.userId.setValue(0);

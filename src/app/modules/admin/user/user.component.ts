@@ -47,7 +47,7 @@ export class UserComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
     readonly router = inject(Router);
-    readonly route = inject(ActivatedRoute);
+    // readonly route = inject(ActivatedRoute);
 
 
     @ViewChild(MatPaginator, { static: true })

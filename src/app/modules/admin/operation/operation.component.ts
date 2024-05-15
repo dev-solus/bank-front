@@ -101,9 +101,9 @@ export class OperationComponent implements AfterViewInit {
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
-            this.operationType.value === '' ? '*' : this.operationType.value,
+            // this.operationType.value === '' ? '*' : this.operationType.value,
             this.accountId.value,
-            this.accountDistId.value,
+            // this.accountDistId.value,
         ]),
         tap(e => this.isLoadingResults = true),
         switchMap(e => this.uow.core.operations.getList(e).pipe(
