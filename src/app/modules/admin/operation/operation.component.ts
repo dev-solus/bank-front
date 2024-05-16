@@ -15,9 +15,9 @@ import { FuseAlertComponent } from '@fuse/components/alert';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UpdateComponent } from './update/update.component';
+import { MatDialog } from '@angular/material/dialog';
 
-
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 
 
 
@@ -41,17 +41,14 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
         MatSelectModule,
         MatIconModule,
         MatProgressSpinnerModule,
-
-
-        RouterLink,
     ],
 })
 export class OperationComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
-    readonly router = inject(Router);
-    readonly route = inject(ActivatedRoute);
 
+
+    readonly dialog = inject(MatDialog);
 
     @ViewChild(MatPaginator, { static: true })
     readonly paginator: MatPaginator;
@@ -97,7 +94,7 @@ export class OperationComponent implements AfterViewInit {
         )),
         startWith(null as any),
         map(_ => [
-            (this.paginator?.pageIndex || 0),
+            (this.paginator?.pageIndex || 0) * (this.paginator?.pageSize ?? 10),// startIndex
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
@@ -133,13 +130,32 @@ export class OperationComponent implements AfterViewInit {
         this.update.next(0);
     }
 
+    openDialog(o: Operation, text) {
+        const dialogRef = this.dialog.open(UpdateComponent, {
+            // width: '1100px',
+            disableClose: true,
+            data: { model: o, title: text }
+        });
+
+        return dialogRef.afterClosed();
+    };
 
     add() {
-        this.router.navigate(['/admin/operation', 0]);
+
+        this.openDialog({} as Operation, 'Ajouter Operation').subscribe(result => {
+            if (result) {
+                this.update.next(0);
+            }
+        });
     }
 
     edit(o: Operation) {
-        this.router.navigate(['/admin/operation', o.id]);
+
+        this.openDialog(o, 'Modifier Operation').subscribe((result: Operation) => {
+            if (result) {
+                this.update.next(0);
+            }
+        });
     }
 
     remove(o: Operation) {

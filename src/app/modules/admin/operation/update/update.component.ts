@@ -15,9 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
     standalone: true,
@@ -38,18 +36,16 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
         MatDatepickerModule,
         MatIconModule,
         MatProgressSpinnerModule,
-        RouterLink,
+        MatDialogModule,
         FuseAlertComponent,
-
     ],
 })
 export class UpdateComponent {
     //di
     readonly fb = inject(FormBuilder);
     readonly uow = inject(UowService);
-
-    readonly route = inject(ActivatedRoute);
-    readonly router = inject(Router);
+    readonly dialogRef = inject(MatDialogRef);
+    readonly data = inject(MAT_DIALOG_DATA);
 
     readonly myForm: FormGroup<TypeForm<Operation>> = this.fb.group({
         id: [0],
@@ -57,13 +53,13 @@ export class UpdateComponent {
         description: [null, []],
         amount: [0, [Validators.min(1),]],
         date: [new Date(), []],
-        accountDebit_id: [0, [Validators.min(1),]],
-        accountCredit_id: [0, [Validators.min(1),]],
+        accountId: [0, [Validators.min(1),]],
+        accountDistId: [0, [Validators.min(1),]],
     }) as any;
 
     // select
-    readonly accounts$ = this.uow.core.accounts.get$;
-    readonly accountDists$ = this.uow.core.accounts.get$;
+    readonly accounts$ = this.uow.core.accounts.getForSelect$;
+    // readonly accountDists$ = this.uow.core.accounts.getForSelect$;
 
     readonly showMessage$ = new Subject<any>();
 
@@ -103,14 +99,8 @@ export class UpdateComponent {
         tap(r => this.back(r)),
     ));
 
-    readonly model = toSignal(this.route.paramMap.pipe(
-        take(1),
-        map(e => +(e.get('id') ?? 0)),
-        filter(id => id !== 0),
-        switchMap(id => this.uow.core.operations.getById(id)),
-        tap(r => this.myForm.patchValue(r)),
-    ));
+
 
     submit = (e: Operation) => e.id === 0 ? this.post$.next() : this.put$.next();
-    back = (e?: Operation) => this.router.navigate(['../'], { relativeTo: this.route });
+    back = (e?: Operation) => this.dialogRef.close(e);
 }

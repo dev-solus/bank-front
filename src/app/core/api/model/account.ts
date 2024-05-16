@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { User } from './user';
 
 
 export interface Account { 
     id?: number;
     accountNumber?: string;
     balance?: number;
+    user?: User;
     status?: string;
     user_id?: number;
 }

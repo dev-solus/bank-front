@@ -12,7 +12,7 @@ export class SuperService<T> {
 
     private getListCache$: Observable<{ list: T[]; count: number; }>;
 
-    getList$ =(args: any[]) => {
+    getList$ = (args: any[]) => {
         const refresh = false;
 
         if (!this.getListCache$ || refresh) {
@@ -61,7 +61,7 @@ export class SuperService<T> {
         return this.http.post<number>(`${this.apiUrl}/${this.controller}/deleteRangeByIds`, ids);
     }
 
-    postRange = (o: T[]) => this.http.post<{id: number}[]>(`${this.apiUrl}/${this.controller}/addRange`, o);
+    postRange = (o: T[]) => this.http.post<{ id: number }[]>(`${this.apiUrl}/${this.controller}/addRange`, o);
 
     autocomplete(name: string, value: string): Observable<{ id: number, name: string }[]> {
         if (!name || !value) {
