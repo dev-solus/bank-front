@@ -46,40 +46,58 @@
     <form [formGroup]="myForm">
         <div class="grid md:grid-cols-2 gap-5">
 
-
-
-            <mat-form-field appearance="fill" class="col-span-2">
-                <mat-label>Compte Debite</mat-label>
-                <mat-select formControlName="accountId">
-                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">
-                       {{$any(e).userName}} ({{$any(e).cin}}) - {{e.name}}
-                    </mat-option>
+            <mat-form-field class="col-span-2">
+                <mat-label>Compte Débité</mat-label>
+                <mat-select formControlName="accountDebit_id">
+                    <mat-option>-- None --</mat-option>
+                    @for (e of users$ | async; track $index) {
+                    <mat-optgroup [label]="$any(e).name">
+                        @for (c of e.accounts; track $index) {
+                        <mat-option [value]="c.id" [disabled]="!c.balance" (click)="selectedAccount.set($any(c))">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        }
+                    </mat-optgroup>
+                    }
                 </mat-select>
                 <mat-error
-                    *ngIf="myForm.controls.accountId.invalid && (myForm.controls.accountId.dirty || myForm.controls.accountId.touched)">
+                    *ngIf="myForm.controls.accountDebit_id.invalid && (myForm.controls.accountDebit_id.dirty || myForm.controls.accountDebit_id.touched)">
+                    Champ est requis
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-span-2">
+                <mat-label>Compte Crédité</mat-label>
+                <mat-select formControlName="accountCredit_id">
+                    <mat-option>-- None --</mat-option>
+                    @for (e of users$ | async; track $index) {
+                    <mat-optgroup [label]="$any(e).name" >
+                        @for (c of e.accounts; track $index) {
+                        <mat-option [value]="c.id" [disabled]="!c.balance" (click)="selectedAccount.set($any(c))">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        }
+                    </mat-optgroup>
+                    }
+                </mat-select>
+                <mat-error
+                    *ngIf="myForm.controls.accountCredit_id.invalid && (myForm.controls.accountCredit_id.dirty || myForm.controls.accountCredit_id.touched)">
                     Champ est requis
                 </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill" class="col-span-2">
-                <mat-label>Account Credite</mat-label>
-                <mat-select formControlName="accountDistId">
-                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">
-                        {{$any(e).userName}} ({{$any(e).cin}}) - {{e.name}}
-                    </mat-option>
-                </mat-select>
-                <mat-error
-                    *ngIf="myForm.controls.accountDistId.invalid && (myForm.controls.accountDistId.dirty || myForm.controls.accountDistId.touched)">
-                    Champ est requis
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill" class="col-span-2">
-                <mat-label>amount</mat-label>
+                <mat-label>Montant</mat-label>
                 <input matInput formControlName="amount" type="undefined" required>
                 <mat-error
                     *ngIf="myForm.controls.amount.invalid && (myForm.controls.amount.dirty || myForm.controls.amount.touched)">
                     Champ est requis
+                </mat-error>
+
+                <mat-error
+                    *ngIf="!selectedAccount().balance">
+                    Votre solde est nul, veuillez vérifier.
+                </mat-error>
+
+                <mat-error
+                    *ngIf="!!selectedAccount().balance && (+selectedAccount().balance < +myForm.controls.amount.value)">
+                    Le montant à transférer est supérieur à votre solde disponible.
                 </mat-error>
             </mat-form-field>
         </div>

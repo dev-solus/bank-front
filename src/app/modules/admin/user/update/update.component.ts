@@ -55,17 +55,17 @@ export class UpdateComponent {
 
     readonly myForm: FormGroup<TypeForm<User>> = this.fb.group({
         id: [0],
-        firstname: [null, []],
-        lastname: [null, []],
-        cin: [null, []],
-        email: [null, []],
+        firstname: [null, [Validators.required]],
+        lastname: [null, [Validators.required]],
+        cin: [null, [Validators.required]],
+        email: [null, [Validators.required, Validators.email]],
         password: [null, []],
-        phone: [null, []],
-        birthdate: [new Date(), []],
+        phone: [null, [Validators.required]],
+        birthdate: [new Date(), [Validators.required]],
         avatar: [null, []],
-        gender: [null, []],
-        address: [null, []],
-        active: [null, []],
+        gender: [null, [Validators.required]],
+        address: [null, [Validators.required]],
+        active: [null, [Validators.required]],
         role_id: [0, [Validators.min(1),]],
     }) as any;
 

@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, ViewEncapsulation } from '@angular/core';
-import { Subject, delay, filter, map, switchMap, take, takeUntil, tap, catchError, of } from 'rxjs';
+import { Component, ChangeDetectionStrategy, inject, ViewEncapsulation, signal } from '@angular/core';
+import { Subject, delay, filter, map, switchMap, take, takeUntil, tap, catchError, of, shareReplay } from 'rxjs';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { Operation } from 'app/core/api';
+import { Account, Operation, User } from 'app/core/api';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -53,15 +53,19 @@ export class UpdateComponent {
         description: [null, []],
         amount: [0, [Validators.min(1),]],
         date: [new Date(), []],
-        accountId: [0, [Validators.min(1),]],
-        accountDistId: [0, [Validators.min(1),]],
+        accountDebit_id: [0, [Validators.min(1),]],
+        accountCredit_id: [0, [Validators.min(1),]],
     }) as any;
 
     // select
-    readonly accounts$ = this.uow.core.accounts.getForSelect$;
-    // readonly accountDists$ = this.uow.core.accounts.getForSelect$;
+    readonly users$ = this.uow.core.users.getWithAccounts().pipe(
+        shareReplay(),
+        map(e => e as (User & {accounts: Account[]})[]),
+    );
 
     readonly showMessage$ = new Subject<any>();
+
+    readonly selectedAccount = signal({balance: 0, id: 0});
 
     readonly post$ = new Subject<void>();
     readonly #post$ = toSignal(this.post$.pipe(

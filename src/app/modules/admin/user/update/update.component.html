@@ -88,7 +88,7 @@
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Mot de passe</mat-label>
-                <input matInput formControlName="password" type="text" required>
+                <input matInput formControlName="password" type="text" >
                 <mat-error
                     *ngIf="myForm.controls.password.invalid && (myForm.controls.password.dirty || myForm.controls.password.touched)">
                     Champ est requis
@@ -126,7 +126,7 @@
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>role</mat-label>
+                <mat-label>Role</mat-label>
                 <mat-select formControlName="role_id">
                     <mat-option *ngFor="let e of roles$ | async" [value]="e.id">{{e.name}}</mat-option>
                 </mat-select>
