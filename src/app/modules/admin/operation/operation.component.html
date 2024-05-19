@@ -28,25 +28,36 @@
 
 
     <!-- Header -->
-    <div *ngIf="!!$any(testVariable).value" class=" py-6 px-4 border-b">
+    <div [ngClass]="{'hidden': !$any(testVariable).value}" class=" py-6 px-4 border-b">
         <!-- Title -->
         <div class="grid md:grid-cols-4 gap-2">
             <mat-form-field appearance="fill">
                 <input matInput (keyup.enter)="search()" placeholder="Type" [formControl]="operationType" required>
             </mat-form-field>
 
-
-            <mat-form-field appearance="fill">
-                <mat-select [formControl]="accountId" [placeholder]="'Sélectionnez une option'">
-                    <mat-option [value]="0">Compte Source</mat-option>
-                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.name}}</mat-option>
+            <mat-form-field>
+                <mat-select [formControl]="accountId">
+                    <mat-option [value]="0">Compte Débité</mat-option>
+                    @for (e of users$ | async; track $index) {
+                    <mat-optgroup [label]="$any(e).name">
+                        @for (c of e.accounts; track $index) {
+                        <mat-option [value]="c.id">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        }
+                    </mat-optgroup>
+                    }
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="fill">
-                <mat-select [formControl]="accountDistId" [placeholder]="'Sélectionnez une option'">
-                    <mat-option [value]="0">Account Destination</mat-option>
-                    <mat-option *ngFor="let e of accounts$ | async" [value]="e.id">{{e.name}}</mat-option>
+            <mat-form-field>
+                <mat-select [formControl]="accountDistId">
+                    <mat-option [value]="0">Compte Crédité</mat-option>
+                    @for (e of users$ | async; track $index) {
+                    <mat-optgroup [label]="$any(e).name" >
+                        @for (c of e.accounts; track $index) {
+                        <mat-option [value]="c.id">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        }
+                    </mat-optgroup>
+                    }
                 </mat-select>
             </mat-form-field>
 
@@ -107,13 +118,13 @@
                                 </div>
                                 <div class="">{{e.amount}}</div>
                                 <div class="">{{e.date | date: "dd/MM/yyyy, HH:mm"}}</div>
-                                <div>
+                                <div class="flex gap-2">
                                     <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
                                         matTooltip="Go to Edit form" (click)="edit(e)">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:pencil' ">
                                         </mat-icon>
                                     </button>
-                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6 ml-2" mat-stroked-button
+                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
                                         matTooltip="Delete this item" (click)="remove(e)">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:trash' ">
                                         </mat-icon>

@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { CachedService } from '../cached.service';
 
 @Component({
     standalone: true,
@@ -44,28 +45,31 @@ export class UpdateComponent {
     //di
     readonly fb = inject(FormBuilder);
     readonly uow = inject(UowService);
+    readonly cached = inject(CachedService);
     readonly dialogRef = inject(MatDialogRef);
-    readonly data = inject(MAT_DIALOG_DATA);
+    readonly data: { model: Operation } = inject(MAT_DIALOG_DATA);
+
+    readonly patchForm = toSignal(of(this.data).pipe(
+        delay(10),
+        tap(e => this.myForm.patchValue(e.model)),
+    ));
 
     readonly myForm: FormGroup<TypeForm<Operation>> = this.fb.group({
         id: [0],
         operationType: [null, []],
         description: [null, []],
-        amount: [0, [Validators.min(1),]],
+        amount: [0, [Validators.min(1),], this.checkAsyncValidator.bind(this)],
         date: [new Date(), []],
         accountDebit_id: [0, [Validators.min(1),]],
         accountCredit_id: [0, [Validators.min(1),]],
     }) as any;
 
     // select
-    readonly users$ = this.uow.core.users.getWithAccounts().pipe(
-        shareReplay(),
-        map(e => e as (User & {accounts: Account[]})[]),
-    );
+    readonly users$ = this.cached.users$;
 
     readonly showMessage$ = new Subject<any>();
 
-    readonly selectedAccount = signal({balance: 0, id: 0});
+    readonly selectedAccount = signal({ balance: 0, id: 0 });
 
     readonly post$ = new Subject<void>();
     readonly #post$ = toSignal(this.post$.pipe(
@@ -78,10 +82,10 @@ export class UpdateComponent {
             catchError(this.uow.handleError),
             map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
         )),
+        tap((r) => this.myForm.enable()),
         tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
         filter(r => r.code === 1),
         delay(500),
-        tap((r) => this.myForm.enable()),
         tap(r => this.back(r)),
     ));
 
@@ -97,13 +101,45 @@ export class UpdateComponent {
             map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
         )),
         tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
+        tap((r) => this.myForm.enable()),
         filter(r => r.code === 1),
         delay(500),
-        tap((r) => this.myForm.enable()),
         tap(r => this.back(r)),
     ));
 
+    get amountBiggerThanBalance() {
+        console.log(this.selectedAccount().balance, +this.myForm.controls.amount.value, +this.myForm.controls.id.value === 0);
 
+        // if (this.selectedAccount().balance === 0) {
+        //     return false;
+        // }
+
+        if (+this.myForm.controls.id.value === 0) {
+            return +this.selectedAccount().balance < +this.myForm.controls.amount.value;
+        }
+
+        console.log((+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value);
+        console.error(+this.selectedAccount().balance, +this.data.model.amount, +this.myForm.controls.amount.value);
+
+
+        return (+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value;
+    }
+
+    checkAsyncValidator(control: FormControl) {
+        return of(control.value).pipe(
+            delay(10), // Simulate an async validation process with a delay
+            map(value => {
+                let b = false;
+                if (!+this.myForm.controls.id.value) {
+                    b = +this.selectedAccount().balance < +value;
+                } else {
+                    b = (+this.selectedAccount().balance + +this.data.model.amount) < +value;
+                }
+
+                return b ? { 'amountBiggerThanBalance': true } : null;
+            })
+        );
+    }
 
     submit = (e: Operation) => e.id === 0 ? this.post$.next() : this.put$.next();
     back = (e?: Operation) => this.dialogRef.close(e);

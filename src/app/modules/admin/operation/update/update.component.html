@@ -33,7 +33,7 @@
                     Retour
                 </button>
 
-                <button class="order-first sm:order-last" mat-flat-button [disabled]="!myForm.dirty" [color]="'primary'"
+                <button class="order-first sm:order-last" mat-flat-button [color]="'primary'"
                     (click)="submit(myForm.getRawValue())">
                     Enregistrer
                 </button>
@@ -43,6 +43,9 @@
 </div>
 
 <ng-template #formTemplate let-myForm>
+    <pre>
+        {{myForm.value | json}}
+    </pre>
     <form [formGroup]="myForm">
         <div class="grid md:grid-cols-2 gap-5">
 
@@ -71,7 +74,7 @@
                     @for (e of users$ | async; track $index) {
                     <mat-optgroup [label]="$any(e).name" >
                         @for (c of e.accounts; track $index) {
-                        <mat-option [value]="c.id" [disabled]="!c.balance" (click)="selectedAccount.set($any(c))">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        <mat-option [value]="c.id">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
                         }
                     </mat-optgroup>
                     }
@@ -86,19 +89,22 @@
                 <mat-label>Montant</mat-label>
                 <input matInput formControlName="amount" type="undefined" required>
                 <mat-error
-                    *ngIf="myForm.controls.amount.invalid && (myForm.controls.amount.dirty || myForm.controls.amount.touched)">
+                    *ngIf="myForm.controls.amount.hasError('required') && (myForm.controls.amount.dirty || myForm.controls.amount.touched)">
                     Champ est requis
                 </mat-error>
 
-                <mat-error
+                <!-- <mat-error
                     *ngIf="!selectedAccount().balance">
                     Votre solde est nul, veuillez vérifier.
-                </mat-error>
+                </mat-error> -->
 
-                <mat-error
-                    *ngIf="!!selectedAccount().balance && (+selectedAccount().balance < +myForm.controls.amount.value)">
+                <mat-error *ngIf="myForm.controls.amount.hasError('amountBiggerThanBalance')">
                     Le montant à transférer est supérieur à votre solde disponible.
                 </mat-error>
+
+                <!-- <mat-error *ngIf="amountBiggerThanBalance">
+                    Le montant à transférer est supérieur à votre solde disponible.
+                </mat-error> -->
             </mat-form-field>
         </div>
     </form>

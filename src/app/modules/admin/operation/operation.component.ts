@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UpdateComponent } from './update/update.component';
 import { MatDialog } from '@angular/material/dialog';
+import { CachedService } from './cached.service';
 
 
 
@@ -46,7 +47,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class OperationComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
-
+    readonly cached = inject(CachedService);
 
     readonly dialog = inject(MatDialog);
 
@@ -75,9 +76,11 @@ export class OperationComponent implements AfterViewInit {
         )),
     );
 
+
+    readonly users$ = this.cached.users$;
     // select
-    readonly accounts$ = this.uow.core.accounts.getForSelect$;
-    readonly accountDists$ = this.uow.core.accounts.getForSelect$;
+    // readonly accounts$ = this.uow.core.accounts.getForSelect$;
+    // readonly accountDists$ = this.uow.core.accounts.getForSelect$;
 
     readonly operationType = new FormControl('');
     readonly accountId = new FormControl(0);
@@ -141,7 +144,6 @@ export class OperationComponent implements AfterViewInit {
     };
 
     add() {
-
         this.openDialog({} as Operation, 'Ajouter Operation').subscribe(result => {
             if (result) {
                 this.update.next(0);
@@ -150,7 +152,6 @@ export class OperationComponent implements AfterViewInit {
     }
 
     edit(o: Operation) {
-
         this.openDialog(o, 'Modifier Operation').subscribe((result: Operation) => {
             if (result) {
                 this.update.next(0);
@@ -161,6 +162,4 @@ export class OperationComponent implements AfterViewInit {
     remove(o: Operation) {
         this.delete$.next(o);
     }
-
-
 }
