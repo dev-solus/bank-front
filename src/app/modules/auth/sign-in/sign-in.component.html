@@ -1,24 +1,15 @@
 <div class="flex flex-col sm:flex-row items-center md:items-center sm:justify-center md:justify-center flex-auto min-w-0">
     <div class="relative md:flex md:items-center md:justify-center w-full sm:w-auto md:h-full md:w-1/2 py-8 px-4 sm:p-12 md:p-16 sm:rounded-2xl md:rounded-none sm:shadow md:shadow-none sm:bg-card">
-       <my-image src="assets/images/fos/bg.png" class="z-0 absolute left-0 top-0 object-cover w-full h-full"></my-image>
+       <!-- <my-image src="assets/images/fos/bg.png" class="z-0 absolute left-0 top-0 object-cover w-full h-full"></my-image> -->
 
         <div class="w-full max-w-96 sm:w-96 mx-auto sm:mx-0 relative z-10">
             <!-- Logo -->
             <!-- <div class="w-14">
-                <img src="assets/images/logo/logo.svg">
+                <img src="assets/images/logo/logo.png">
             </div> -->
 
             <!-- Title -->
             <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Se connecter</div>
-            <div class="flex items-baseline mt-0.5 font-medium">
-                <div>Vous n'avez pas de compte ? </div>
-                <a
-                    class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/sign-up']">S'inscrire
-                </a>
-            </div>
-
-
 
             <!-- Alert -->
             <ng-container *ngIf="showMessage | async as e">
@@ -90,6 +81,16 @@
                         [diameter]="24"
                         [mode]="'indeterminate'"></mat-progress-spinner>
                 </button>
+
+                <div class="grid grid-cols-4 my-5 gap-y-2 text-xs">
+
+                    @for (e of users; track $index) {
+                    <span class="col-span-3 shadow text-xs">{{e.email}} - <span
+                            class="p-0.5 bg-orange-400 text-white rounded-md">{{e.role}}</span></span>
+                    <span class="shadow cursor-pointer"
+                        (click)="myForm.setValue({email: e.email, password: e.password})">{{e.password}}</span>
+                    }
+                </div>
 
             </form>
         </div>

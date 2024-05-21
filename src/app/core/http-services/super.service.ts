@@ -48,6 +48,11 @@ export class SuperService<T> {
      */
     patch = (id: number, model: { op: string, path: string, value: any }[]) => this.http.patch<T>(`${this.apiUrl}/${this.controller}/patch/${id}`, model);
 
+    patchObject = (id: number, o: T, isAdd = false) => {
+        const model = Object.keys(o).map(key => ({ op: isAdd ? 'add' : "replace", path: `/${key}`, value: o[key] }));
+        return this.patch(id, model);
+    };
+
     delete = (id) => this.http.delete<boolean>(`${this.apiUrl}/${this.controller}/delete/${id}`);
 
     updateRange(o: T[]) {

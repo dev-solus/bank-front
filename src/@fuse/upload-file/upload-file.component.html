@@ -17,7 +17,7 @@
 
 <ng-template #defaultTemplate>
   <div class="flex justify-center items-center flex-col w-full gap-5 ">
-    <img *ngIf="isImage"  alt="" onerror="src='/assets/images/logo/logo.svg'" [src]="fileName()">
+    <img *ngIf="isImage"  alt="" onerror="src='/assets/images/logo/logo.png'" [src]="fileName()">
     <div class=" flex items-center justify-center gap-3 w-full ">
       <div class="w-full">
         <mat-form-field *ngIf="!isImage" class="cursor-pointer w-full">

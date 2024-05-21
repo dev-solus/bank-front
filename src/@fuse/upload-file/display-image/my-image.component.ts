@@ -6,7 +6,7 @@ import { displayImageCore } from 'environments/environment.development';
   standalone: true,
   imports: [],
   template: `
-  <img [src]="displayImageCore(src)" [class]="class" [alt]="alt ?? src" onerror="src='assets/images/logo/logo.svg'">
+  <img [src]="displayImageCore(src)" [class]="class" [alt]="alt ?? src" onerror="src='assets/images/logo/logo.png'">
   `,
 })
 export class MyImageComponent {

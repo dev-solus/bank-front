@@ -121,6 +121,18 @@
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:trash' ">
                                         </mat-icon>
                                     </button>
+
+                                    <button class="min-w-10 min-h-7 h-7 leading-6" mat-stroked-button
+                                        matTooltip="Go to " (click)="resetPassword(e)">
+                                        <mat-icon svgIcon="heroicons_outline:key"></mat-icon>
+                                    </button>
+
+                                    <button class="min-w-10 min-h-7 h-7 leading-6" mat-stroked-button
+                                        matTooltip="Go to " (click)="account(e)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:banknotes'">
+                                        </mat-icon>
+                                    </button>
+
                                 </div>
                             </div>
                         </ng-container>

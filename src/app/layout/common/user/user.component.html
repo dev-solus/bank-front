@@ -26,34 +26,6 @@
         </span>
     </button>
     <mat-divider class="my-2"></mat-divider>
-    <button mat-menu-item [routerLink]="[!session.isAdmin() ? '/services' : '/admin/service']"  routerLinkActive="router-link-active">
-        <!-- <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon> -->
-        <mat-icon svgIcon="heroicons_outline:server-stack"></mat-icon>
-        <span>Services</span>
-    </button>
-
-    <button mat-menu-item [routerLink]="[!session.isAdmin() ? '/services/historique' : '/admin/memberShipService']" routerLinkActive="router-link-active">
-        <!-- <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon> -->
-        <mat-icon svgIcon="heroicons_outline:clipboard-document-list"></mat-icon>
-        <span>Demandes</span>
-    </button>
-
-    <button mat-menu-item [routerLink]="[!session.isAdmin() ? '/profil' : '/admin/user']"
-        routerLinkActive="router-link-active">
-        <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
-        <span>Profil</span>
-    </button>
-    <!-- <button mat-menu-item>
-        <mat-icon [svgIcon]="'heroicons_outline:cog-8-tooth'"></mat-icon>
-        <span>Paramètres</span>
-    </button> -->
-    <!-- <button
-        mat-menu-item
-        [matMenuTriggerFor]="userStatus">
-        <mat-icon [svgIcon]="'heroicons_outline:ellipsis-horizontal-circle'"></mat-icon>
-        <span>Statut</span>
-    </button> -->
-    <mat-divider class="my-2"></mat-divider>
     <button mat-menu-item (click)="signOut()">
         <mat-icon [svgIcon]="'heroicons_outline:arrow-right-on-rectangle'"></mat-icon>
         <span>se déconnecter</span>

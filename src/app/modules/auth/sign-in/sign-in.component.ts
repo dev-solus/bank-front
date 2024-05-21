@@ -43,11 +43,10 @@ export class AuthSignInComponent {
     private route = inject(ActivatedRoute);
     public uow = inject(UowService);
 
-    private http = inject(HttpClient);
-    public _fuseConfigService = inject(FuseConfigService);
-    readonly notificationsService = inject(NotificationsService);
-
-
+    readonly users = [
+        { email: 'mourabit@gmail.com', password: '123', role: 'Client' },
+        { email: 'agent@bank.com', password: '123', role: 'Agent' },
+    ]
 
     readonly myForm: FormGroup<TypeForm<{ email: string, password: string }>> = this.fb.group({
         email: [this.uow.isDev ? 'admin@bank.com' : '', [Validators.required]],

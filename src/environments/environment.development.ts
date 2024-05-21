@@ -12,7 +12,7 @@ export const environment = {
 export const displayImageCore = (urlImage: string, url = environment.apiUrl) => displayImage(urlImage, url)
 
 function displayImage(urlImage: string, url = environment.url) {
-    const IMAGE = 'assets/images/logo/logo.svg';
+    const IMAGE = 'assets/images/logo/logo.png';
 
     if (!urlImage) {
         return IMAGE;

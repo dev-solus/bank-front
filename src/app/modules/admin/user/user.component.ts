@@ -17,6 +17,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { MyImageComponent } from '@fuse/upload-file/display-image/my-image.component';
 import { User } from 'app/core/api';
+import { MatDialog } from '@angular/material/dialog';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 
 @Component({
@@ -47,6 +49,8 @@ export class UserComponent implements AfterViewInit {
     //DI
     readonly uow = inject(UowService);
     readonly router = inject(Router);
+    readonly dialog = inject(MatDialog);
+
     // readonly route = inject(ActivatedRoute);
 
 
@@ -146,6 +150,17 @@ export class UserComponent implements AfterViewInit {
 
     account(o: User) {
         this.router.navigate(['/admin/account'], { queryParams: { userId: o.id } });
+    }
+
+
+    resetPassword(o: User) {
+        this.dialog.open(ResetPasswordComponent, { disableClose: true, data: { model: o} }).afterClosed().pipe(
+            tap(result => {
+                if (result) {
+                    this.update.next(0);
+                }
+            })
+        ).subscribe();
     }
 
 
