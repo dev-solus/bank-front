@@ -409,14 +409,15 @@ export class OperationsControllerService {
      * @param pageSize 
      * @param sortBy 
      * @param sortDir 
+     * @param filter 
      * @param accountId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
-    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, accountId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, filter: string, accountId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<object>;
+    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, filter: string, accountId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<object>>;
+    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, filter: string, accountId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<object>>;
+    public getAll5(startIndex: number, pageSize: number, sortBy: string, sortDir: string, filter: string, accountId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (startIndex === null || startIndex === undefined) {
             throw new Error('Required parameter startIndex was null or undefined when calling getAll5.');
         }
@@ -428,6 +429,9 @@ export class OperationsControllerService {
         }
         if (sortDir === null || sortDir === undefined) {
             throw new Error('Required parameter sortDir was null or undefined when calling getAll5.');
+        }
+        if (filter === null || filter === undefined) {
+            throw new Error('Required parameter filter was null or undefined when calling getAll5.');
         }
         if (accountId === null || accountId === undefined) {
             throw new Error('Required parameter accountId was null or undefined when calling getAll5.');
@@ -464,7 +468,7 @@ export class OperationsControllerService {
             }
         }
 
-        let localVarPath = `/api/operations/getAll/${this.configuration.encodeParam({name: "startIndex", value: startIndex, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "pageSize", value: pageSize, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "sortBy", value: sortBy, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "sortDir", value: sortDir, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "accountId", value: accountId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
+        let localVarPath = `/api/operations/getAll/${this.configuration.encodeParam({name: "startIndex", value: startIndex, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "pageSize", value: pageSize, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int32"})}/${this.configuration.encodeParam({name: "sortBy", value: sortBy, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "sortDir", value: sortDir, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "filter", value: filter, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/${this.configuration.encodeParam({name: "accountId", value: accountId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
         return this.httpClient.request<object>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
