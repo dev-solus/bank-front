@@ -52,11 +52,14 @@
             <mat-form-field class="col-span-2">
                 <mat-label>Compte Débité</mat-label>
                 <mat-select formControlName="accountDebit_id">
-                    <mat-option>-- None --</mat-option>
-                    @for (e of users$ | async; track $index) {
+                    <mat-option [value]="null">-- None --</mat-option>
+                    @for (e of usersDebite$ | async; track $index) {
                     <mat-optgroup [label]="$any(e).name">
                         @for (c of e.accounts; track $index) {
-                        <mat-option [value]="c.id" [disabled]="!c.balance" (click)="selectedAccount.set($any(c))">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        <mat-option [value]="c.id" [disabled]="!c.balance || c.status !== 'Ouvert'" (click)="selectedAccount.set($any(c))">
+                            {{c.accountNumber}} - Solde: {{c.balance}} <span class="bg-green-800 text-white px-1 rounded-lg"
+                            [ngClass]="{'bg-red-700': c.status !== 'Ouvert'}">{{c.status}}</span>
+                        </mat-option>
                         }
                     </mat-optgroup>
                     }
@@ -70,11 +73,14 @@
             <mat-form-field class="col-span-2">
                 <mat-label>Compte Crédité</mat-label>
                 <mat-select formControlName="accountCredit_id">
-                    <mat-option>-- None --</mat-option>
-                    @for (e of users$ | async; track $index) {
+                    <mat-option [value]="null">-- None --</mat-option>
+                    @for (e of usersCredit$ | async; track $index) {
                     <mat-optgroup [label]="$any(e).name" >
                         @for (c of e.accounts; track $index) {
-                        <mat-option [value]="c.id">{{c.accountNumber}} - Solde: {{c.balance}}</mat-option>
+                        <mat-option [value]="c.id" [disabled]="c.status !== 'Ouvert'">
+                            {{c.accountNumber}} - Solde: {{c.balance}} <span class="bg-green-800 text-white px-1 rounded-lg"
+                                [ngClass]="{'bg-red-700': c.status !== 'Ouvert'}">{{c.status}}</span>
+                        </mat-option>
                         }
                     </mat-optgroup>
                     }

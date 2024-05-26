@@ -45,8 +45,8 @@ export class ResetPasswordComponent {
     readonly data = inject(MAT_DIALOG_DATA);
 
     readonly myForm: FormGroup<TypeForm<{ password: string, passwordConfirm: string }>> = this.fb.group({
-        password: [this.uow.isDev ? '1234' : '', [Validators.required]],
-        passwordConfirm: [this.uow.isDev ? '1234' : '', [Validators.required]]
+        password: [this.uow.isDev ? '' : '', [Validators.required]],
+        passwordConfirm: [this.uow.isDev ? '' : '', [Validators.required]]
     },
         {
             validators: FuseValidators.mustMatch('password', 'passwordConfirm')
@@ -61,15 +61,16 @@ export class ResetPasswordComponent {
         tap(_ => this.myForm.markAllAsTouched()),
         filter(_ => this.myForm.valid && this.myForm.dirty),
         tap(_ => this.myForm.disable()),
-        map(_ => ({password: this.myForm.controls.password.value})),
-        switchMap(o => this.uow.core.users.patchObject(this.data.model.id, o).pipe(
+        map(_ => ({ password: this.myForm.controls.password.value })),
+        // switchMap(o => this.uow.core.users.patchObject(this.data.model.id, o).pipe(
+        switchMap(o => this.uow.core.auth.changePassword({ id: this.data.model.id, password: o.password }).pipe(
             catchError(this.uow.handleError),
             map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
         )),
         tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
+        tap((r) => this.myForm.enable()),
         filter(r => r.code === 1),
         delay(500),
-        tap((r) => this.myForm.enable()),
         tap(e => this.dialogRef.close(e)),
     ));
 

@@ -45,7 +45,12 @@
                 <button mat-icon-button type="button"
                     (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
                     matSuffix>
-                    <mat-icon>{{passwordField.type === 'text' ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    <!-- <mat-icon>{{passwordField.type === 'text' ? 'visibility_off' : 'visibility'}}</mat-icon>  -->
+                    @if (passwordField.type !== 'text') {
+                        <mat-icon svgIcon="heroicons_outline:eye"></mat-icon>
+                    } @else {
+                        <mat-icon svgIcon="heroicons_outline:eye-slash"></mat-icon>
+                    }
                 </button>
                 <mat-error
                     *ngIf="myForm.controls.password.invalid && (myForm.controls.password.dirty || myForm.controls.password.touched)">

@@ -9,8 +9,8 @@ export class FuseConfirmationService
 {
     private _matDialog: MatDialog = inject(MatDialog);
     private _defaultConfig: FuseConfirmationConfig = {
-        title      : 'Confirm action',
-        message    : 'Are you sure you want to confirm this action?',
+        title      : "Confirmer l'action",
+        message    : 'Êtes-vous sûr de vouloir confirmer cette action?',
         icon       : {
             show : true,
             name : 'heroicons_outline:exclamation-triangle',

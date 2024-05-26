@@ -4,6 +4,14 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 export const defaultNavigation: FuseNavigationItem[] = [
 
     {
+        id: 'operation',
+        title: 'Operation',
+        subtitle: 'Gestion des operation',
+        icon: 'heroicons_outline:cog',
+        type: 'basic',
+        link: '/admin/operation',
+    },
+    {
         id: 'User',
         title: 'Utilisateur',
         subtitle: 'Gestion des utilisateurs',
@@ -19,42 +27,26 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         link: '/admin/account',
     },
-    {
-        id: 'operation',
-        title: 'Operation',
-        subtitle: 'Gestion des operation',
-        icon: 'heroicons_outline:cog',
-        type: 'basic',
-        link: '/admin/operation',
-    },
-    {
-        id: 'settings',
-        title: 'Settings',
-        type: 'collapsable',
-        icon: 'heroicons_outline:cog',
-        subtitle: 'Admin Paramètres',
-        // link: '',
-        children: [
-            {
-                id: 'Role',
-                title: 'Role',
-                type: 'basic',
-                link: '/admin/role',
-            },
-        ]
-    },
+    // {
+    //     id: 'settings',
+    //     title: 'Settings',
+    //     type: 'collapsable',
+    //     icon: 'heroicons_outline:cog',
+    //     subtitle: 'Admin Paramètres',
+    //     // link: '',
+    //     children: [
+    //         {
+    //             id: 'Role',
+    //             title: 'Role',
+    //             type: 'basic',
+    //             link: '/admin/role',
+    //         },
+    //     ]
+    // },
 
 
 
 ];
 export const compactNavigation: FuseNavigationItem[] = [...defaultNavigation];
 export const futuristicNavigation: FuseNavigationItem[] = [...defaultNavigation];
-export const horizontalNavigation: FuseNavigationItem[] = [
-    // {
-    //     id: 'example',
-    //     title: 'Profil',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:chart-pie',
-    //     link: '/example'
-    // },
-];
+export const horizontalNavigation: FuseNavigationItem[] = [...defaultNavigation];

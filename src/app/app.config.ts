@@ -11,6 +11,7 @@ import { provideTransloco } from 'app/core/transloco/transloco.provider';
 import { mockApiServices } from 'app/mock-api';
 
 import { NativeDateAdapter, MatDateFormats, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 export class FrenchDateAdapter extends NativeDateAdapter {
     parse(value: any): Date | null {
@@ -57,7 +58,10 @@ export const appConfig: ApplicationConfig = {
             withPreloading(PreloadAllModules),
             withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
         ),
-
+        {
+            provide: MatPaginatorIntl,
+            useFactory: () => ({...new MatPaginatorIntl(), itemsPerPageLabel: 'element par page'})
+        },
         // Material Date Adapter
         {
             provide: DateAdapter,
@@ -85,7 +89,7 @@ export const appConfig: ApplicationConfig = {
                 services: mockApiServices,
             },
             fuse: {
-                layout: 'classy',
+                layout: 'modern',
                 scheme: 'light',
                 screens: {
                     sm: '600px',

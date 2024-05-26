@@ -21,6 +21,7 @@ import { CachedService } from './cached.service';
 import { MySelectComponent } from "@fuse/my-select/my-select.component";
 import {MatChipsModule} from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { sumBy } from 'lodash';
 
 @Component({
     standalone: true,
@@ -69,17 +70,18 @@ export class OperationComponent implements AfterViewInit {
     readonly showMessage$ = new Subject<any>();
 
     readonly delete$ = new Subject<Operation>();
-    readonly #delete$ = this.delete$.pipe(
-        switchMap(item => this.uow.fuseConfirmation.open({ message: 'Operation' }).afterClosed().pipe(
+    readonly #delete$ = toSignal( this.delete$.pipe(
+        switchMap(item => this.uow.fuseConfirmation.open().afterClosed().pipe(
             filter((e: 'confirmed' | 'cancelled') => e === 'confirmed'),
             tap(e => console.warn(e)),
             switchMap(_ => this.uow.core.operations.delete(item.id).pipe(
                 catchError(this.uow.handleError),
-                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
+                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? "Vous ne pouvez pas supprimer car il est lié à d'autres enregistrements" : 'Enregistrement réussi' })),
                 tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
+                tap(e => e.code > 0 && this.update.next(10)),
             )),
         )),
-    );
+    ));
 
 
     // readonly users$ = this.cached.users$;
@@ -87,10 +89,13 @@ export class OperationComponent implements AfterViewInit {
     // select
     readonly accounts$ =this.update.pipe(
         startWith(0),
-        switchMap(_ => this.uow.core.accounts.get$.pipe(
+        // filter(e => e === 10),
+        filter(_ => !!this.userId.value?.id),
+        switchMap(_ => this.uow.core.accounts.getAllByUserId(+this.userId.value?.id).pipe(
             catchError(this.uow.handleError),
         )),
-        map(list => list.filter(e => +e.user_id === +this.userId.value?.id )),
+        // map(list => list.filter(e => +e.user_id === +this.userId.value?.id )),
+        map((list: Account[]) => ({ list, total: sumBy(list, e => e.balance) })),
     );
 
 
@@ -114,7 +119,6 @@ export class OperationComponent implements AfterViewInit {
             this.sort.sortChange,
             this.paginator.page,
             this.update,
-            this.#delete$,
         )),
         startWith(null as any),
         map(_ => [
@@ -182,7 +186,7 @@ export class OperationComponent implements AfterViewInit {
     add() {
         this.openDialog({} as Operation, 'Ajouter Operation').subscribe(result => {
             if (result) {
-                this.update.next(0);
+                this.update.next(10);
             }
         });
     }
@@ -190,7 +194,7 @@ export class OperationComponent implements AfterViewInit {
     edit(o: Operation) {
         this.openDialog(o, 'Modifier Operation').subscribe((result: Operation) => {
             if (result) {
-                this.update.next(0);
+                this.update.next(10);
             }
         });
     }

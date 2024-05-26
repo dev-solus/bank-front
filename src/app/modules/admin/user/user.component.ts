@@ -19,6 +19,7 @@ import { MyImageComponent } from '@fuse/upload-file/display-image/my-image.compo
 import { User } from 'app/core/api';
 import { MatDialog } from '@angular/material/dialog';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { fuseAnimations } from '@fuse/animations';
 
 
 @Component({
@@ -26,6 +27,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     selector: 'app-user',
     templateUrl: './user.component.html',
     styles: [``],
+    animations: fuseAnimations,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CommonModule,
@@ -76,12 +78,12 @@ export class UserComponent implements AfterViewInit {
 
     readonly delete$ = new Subject<User>();
     readonly #delete$ = this.delete$.pipe(
-        switchMap(item => this.uow.fuseConfirmation.open({ message: 'User' }).afterClosed().pipe(
+        switchMap(item => this.uow.fuseConfirmation.open().afterClosed().pipe(
             filter((e: 'confirmed' | 'cancelled') => e === 'confirmed'),
             tap(e => console.warn(e)),
             switchMap(_ => this.uow.core.users.delete(item.id).pipe(
                 catchError(this.uow.handleError),
-                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
+                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? "Vous ne pouvez pas supprimer car il est lié à d'autres enregistrements" : 'Enregistrement réussi' })),
                 tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
             )),
         )),

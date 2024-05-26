@@ -6,42 +6,49 @@
         <div class="flex-1 min-w-0">
             <!-- Title -->
             <div class="mt-2 flex justify-between items-center">
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 ">
-                    Operations
-                </h2>
+                <div class="flex items-start gap-4">
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 ">
+                        Operations
+                    </h2>
 
-                <div class="flex gap-1">
-                    <div class="flex gap-2">
-                        <form class="example-form" *ngIf="isAdmin()">
-                            <mat-form-field class="example-full-width">
-                              <mat-label>Filter</mat-label>
-                              <input type="text"
-                              placeholder="Utilisateur, CIN, email, compte"
-                                     matInput
-                                     [formControl]="userId"
-                                     [matAutocomplete]="auto">
-                              <mat-autocomplete (optionSelected)="search()" [displayWith]="display" autoActiveFirstOption #auto="matAutocomplete">
+                    <div class="flex gap-4 items-start">
+                        <mat-form-field class="w-72" *ngIf="isAdmin()">
+                            <!-- <mat-label>Filter</mat-label> -->
+                            <input type="text" placeholder="Utilisateur, CIN, email, compte" matInput
+                                [formControl]="userId" [matAutocomplete]="auto">
+                            <mat-autocomplete (optionSelected)="search()" [displayWith]="display" autoActiveFirstOption
+                                #auto="matAutocomplete">
                                 @for (e of users$ | async; track e.id) {
-                                  <mat-option [value]="e">
+                                <mat-option [value]="e">
                                     {{e.firstname}} {{e.lastname}} (CIN: {{e.cin}})
                                 </mat-option>
                                 }
-                              </mat-autocomplete>
-                            </mat-form-field>
-                          </form>
+                            </mat-autocomplete>
+                        </mat-form-field>
 
-                        <mat-chip-listbox [formControl]="accountId" class="mat-mdc-chip-set-stacked">
-                            @for (e of accounts$ | async; track e.id) {
-                            <mat-chip-option (click)="search()" [color]="'primary'" [value]="e.id">{{e.accountNumber}}
-                                ({{e.balance}} MAD)</mat-chip-option>
-                            }
-                        </mat-chip-listbox>
+                        <div class="">
+                            <mat-chip-listbox [formControl]="accountId" class="mat-mdc-chip-set-stacked w-72">
+                                @if (accounts$ | async; as a) {
+                                @for (e of a.list; track e.id) {
+                                <mat-chip-option (click)="search()" [color]="'primary'"
+                                    [value]="e.id">{{e.accountNumber}}
+                                    ({{e.balance}} MAD)
+                                    <span class="bg-green-800 text-white px-1 rounded-lg"
+                                        [ngClass]="{'bg-red-700': e.status !== 'Ouvert'}">{{e.status}}</span>
+                                </mat-chip-option>
+                                }
+                                <mat-chip-option selected>Total {{a.total}}</mat-chip-option>
+                                }
+                            </mat-chip-listbox>
+                        </div>
 
-
-                        <button mat-raised-button (click)="reset()">
-                            <mat-icon svgIcon="heroicons_outline:arrow-uturn-left"></mat-icon>
-                        </button>
                     </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button mat-raised-button (click)="reset()" *ngIf="isAdmin()">
+                        <mat-icon svgIcon="heroicons_outline:arrow-uturn-left"></mat-icon>
+                    </button>
 
                     <button mat-flat-button [color]="'primary'" (click)="add()">
                         <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
@@ -91,27 +98,41 @@
 
                                 <div class="">{{e.id}}</div>
                                 <div class="col-span-3">
-                                    <span *ngIf="e.accountDebit.user as u" class="flex gap-2">
-                                        <span >{{u.firstname}}
-                                            {{u.lastname}}</span>
+                                    <span *ngIf="e.accountDebit.user as u" class="flex flex-col">
+                                        <div  class="flex items-center gap-2">
+                                            <span>{{u.firstname}} {{u.lastname}}</span>
+
                                             <ng-container [ngTemplateOutlet]="type"
-                                            [ngTemplateOutletContext]="{$implicit:$any(e.accountDebit).value}"></ng-container>
-                                        <span class="underline cursor-pointer text-sm italic"
-                                            (click)="userId.setValue(u.id);search()">(CIN: {{u.cin}}) - Compte
-                                            {{e.accountDebit?.accountNumber}}</span>
+                                                [ngTemplateOutletContext]="{$implicit:$any(e.accountDebit).value}"></ng-container>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <span class="cursor-pointer text-sm">(CIN: {{u.cin}}) -
+                                                Compte
+                                                {{e.accountDebit?.accountNumber}}</span>
+
+                                            <span class="bg-green-800 text-white px-1 rounded-lg"
+                                                [ngClass]="{'bg-red-700': e.accountDebit?.status !== 'Ouvert'}">{{e.accountDebit?.status}}</span>
+                                        </div>
                                     </span>
                                 </div>
                                 <div class="col-span-3">
-                                    <span *ngIf="e.accountCredit.user as u" class="flex gap-2">
-                                        <span>{{u.firstname}}
-                                            {{u.lastname}}</span>
+                                    <span *ngIf="e.accountCredit.user as u" class="flex flex-col">
+                                        <div  class="flex items-center gap-2">
+                                            <span>{{u.firstname}} {{u.lastname}}</span>
 
                                             <ng-container [ngTemplateOutlet]="type"
-                                            [ngTemplateOutletContext]="{$implicit:$any(e.accountCredit).value}"></ng-container>
+                                                [ngTemplateOutletContext]="{$implicit:$any(e.accountCredit).value}"></ng-container>
 
-                                        <span class="underline cursor-pointer text-sm italic"
-                                            (click)="userId.setValue(u.id);search()">(CIN: {{u.cin}}) - Compte
-                                            {{e.accountCredit?.accountNumber}}</span>
+                                        </div>
+
+                                        <div class="flex gap-2">
+                                            <span class="cursor-pointer text-sm">(CIN: {{u.cin}}) - Compte
+                                                {{e.accountCredit?.accountNumber}}</span>
+
+                                            <span class="bg-green-800 text-white px-1 rounded-lg"
+                                                [ngClass]="{'bg-red-700': e.accountCredit?.status !== 'Ouvert'}">{{e.accountCredit?.status}}</span>
+                                        </div>
+
                                     </span>
                                 </div>
 
@@ -123,7 +144,7 @@
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:pencil' ">
                                         </mat-icon>
                                     </button>
-                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button
+                                    <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button *ngIf="isAdmin()"
                                         matTooltip="Delete this item" (click)="remove(e)">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:trash' ">
                                         </mat-icon>
@@ -148,8 +169,12 @@
 
 <ng-template #type let-value>
     @if (value === 'credit') {
-        <span class="p-1 bg-green-800 text-white">Crédit</span>
+    <span class="px-1 bg-blue-500  rounded-lg text-sm">
+        <mat-icon svgIcon="heroicons_outline:arrow-trending-up" class="text-white"></mat-icon>
+    </span>
     } @else if (value === 'debit') {
-        <span class="p-1 bg-red-800 text-white">Débit</span>
+    <span class="px-1 bg-orange-500  rounded-lg text-sm">
+        <mat-icon svgIcon="heroicons_outline:arrow-trending-down" class="text-white"></mat-icon>
+    </span>
     }
 </ng-template>

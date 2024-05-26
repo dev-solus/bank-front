@@ -64,7 +64,7 @@ export class RoleComponent implements AfterViewInit {
 
     readonly delete$ = new Subject<Role>();
     readonly #delete$ = this.delete$.pipe(
-        switchMap(item => this.uow.fuseConfirmation.open({ message: 'Role' }).afterClosed().pipe(
+        switchMap(item => this.uow.fuseConfirmation.open().afterClosed().pipe(
             filter((e: 'confirmed' | 'cancelled') => e === 'confirmed'),
             tap(e => console.warn(e)),
             switchMap(_ => this.uow.core.roles.delete(item.id).pipe(

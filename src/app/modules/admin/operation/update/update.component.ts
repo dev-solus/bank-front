@@ -54,6 +54,8 @@ export class UpdateComponent {
         tap(e => this.myForm.patchValue(e.model)),
     ));
 
+    readonly isAdmin = this.uow.session.isAdmin;
+
     readonly myForm: FormGroup<TypeForm<Operation>> = this.fb.group({
         id: [0],
         operationType: [null, []],
@@ -65,7 +67,16 @@ export class UpdateComponent {
     }) as any;
 
     // select
-    readonly users$ = this.cached.users$;
+    readonly usersDebite$ = this.cached.users$.pipe(
+        map(list => {
+            if (this.isAdmin()) {
+                return list;
+            }
+
+            return list.filter(e => e.id === this.uow.session.user().id);
+        })
+    );
+    readonly usersCredit$ = this.cached.users$;
 
     readonly showMessage$ = new Subject<any>();
 
@@ -107,23 +118,23 @@ export class UpdateComponent {
         tap(r => this.back(r)),
     ));
 
-    get amountBiggerThanBalance() {
-        console.log(this.selectedAccount().balance, +this.myForm.controls.amount.value, +this.myForm.controls.id.value === 0);
+    // get amountBiggerThanBalance() {
+    //     console.log(this.selectedAccount().balance, +this.myForm.controls.amount.value, +this.myForm.controls.id.value === 0);
 
-        // if (this.selectedAccount().balance === 0) {
-        //     return false;
-        // }
+    //     // if (this.selectedAccount().balance === 0) {
+    //     //     return false;
+    //     // }
 
-        if (+this.myForm.controls.id.value === 0) {
-            return +this.selectedAccount().balance < +this.myForm.controls.amount.value;
-        }
+    //     if (+this.myForm.controls.id.value === 0) {
+    //         return +this.selectedAccount().balance < +this.myForm.controls.amount.value;
+    //     }
 
-        console.log((+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value);
-        console.error(+this.selectedAccount().balance, +this.data.model.amount, +this.myForm.controls.amount.value);
+    //     console.log((+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value);
+    //     console.error(+this.selectedAccount().balance, +this.data.model.amount, +this.myForm.controls.amount.value);
 
 
-        return (+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value;
-    }
+    //     return (+this.selectedAccount().balance + +this.data.model.amount) < +this.myForm.controls.amount.value;
+    // }
 
     checkAsyncValidator(control: FormControl) {
         return of(control.value).pipe(

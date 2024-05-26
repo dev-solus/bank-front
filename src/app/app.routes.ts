@@ -45,7 +45,7 @@ export const appRoutes: Route[] = [
         component: LayoutComponent,
         resolve: { initialData: initialDataResolver },
         children: [
-            { path: '', pathMatch: 'full', redirectTo: 'product' },
+            { path: '', pathMatch: 'full', redirectTo: 'operation' },
             { path: 'user', loadChildren: () => import('app/modules/admin/user/user.routes') },
             { path: 'account', loadChildren: () => import('app/modules/admin/account/account.routes') },
             { path: 'operation', loadChildren: () => import('app/modules/admin/operation/operation.routes') },

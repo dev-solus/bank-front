@@ -62,12 +62,12 @@ export class AccountComponent implements AfterViewInit {
 
     readonly delete$ = new Subject<Account>();
     readonly #delete$ = this.delete$.pipe(
-        switchMap(item => this.uow.fuseConfirmation.open({ message: 'Account' }).afterClosed().pipe(
+        switchMap(item => this.uow.fuseConfirmation.open().afterClosed().pipe(
             filter((e: 'confirmed' | 'cancelled') => e === 'confirmed'),
             tap(e => console.warn(e)),
             switchMap(_ => this.uow.core.accounts.delete(item.id).pipe(
                 catchError(this.uow.handleError),
-                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? e.message : 'Enregistrement réussi' })),
+                map((e: any) => ({ code: e.code < 0 ? -1 : 1, message: e.code < 0 ? "Vous ne pouvez pas supprimer car il est lié à d'autres enregistrements" : 'Enregistrement réussi' })),
                 tap(r => this.showMessage$.next({ message: r.message, code: r.code })),
             )),
         )),
