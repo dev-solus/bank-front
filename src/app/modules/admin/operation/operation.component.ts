@@ -1,6 +1,6 @@
 import { Component, ViewChild, Signal, AfterViewInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { merge, Subject, switchMap, filter, map, startWith, tap, delay, catchError } from 'rxjs';
-import { Account, Operation } from 'app/core/api';
+import { merge, Subject, switchMap, filter, map, startWith, tap, delay, catchError, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Account, Operation, User } from 'app/core/api';
 import { UowService, TypeForm } from 'app/core/http-services/uow.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -19,9 +19,8 @@ import { UpdateComponent } from './update/update.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CachedService } from './cached.service';
 import { MySelectComponent } from "@fuse/my-select/my-select.component";
-
-
-
+import {MatChipsModule} from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
     standalone: true,
@@ -43,7 +42,9 @@ import { MySelectComponent } from "@fuse/my-select/my-select.component";
         MatSelectModule,
         MatIconModule,
         MatProgressSpinnerModule,
-        MySelectComponent
+        MySelectComponent,
+        MatChipsModule,
+        MatAutocompleteModule,
     ]
 })
 export class OperationComponent implements AfterViewInit {
@@ -63,6 +64,8 @@ export class OperationComponent implements AfterViewInit {
     public isLoadingResults = true;
     public totalRecords = 0;
 
+    readonly isAdmin = this.uow.session.isAdmin;
+
     readonly showMessage$ = new Subject<any>();
 
     readonly delete$ = new Subject<Operation>();
@@ -79,16 +82,29 @@ export class OperationComponent implements AfterViewInit {
     );
 
 
-    readonly users$ = this.cached.users$;
+    // readonly users$ = this.cached.users$;
 
     // select
-    // readonly accounts$ = this.uow.core.accounts.getForSelect$;
-    // readonly accountDists$ = this.uow.core.accounts.getForSelect$;
+    readonly accounts$ =this.update.pipe(
+        startWith(0),
+        switchMap(_ => this.uow.core.accounts.get$.pipe(
+            catchError(this.uow.handleError),
+        )),
+        map(list => list.filter(e => +e.user_id === +this.userId.value)),
+    );
 
-    readonly operationType = new FormControl('');
+
+    readonly userId = new FormControl<any>(this.uow.session.user()?.id || null);
     readonly accountId = new FormControl(0);
-    readonly accounts = signal<Account[]>([]);
-    readonly clientIdResult = signal(0);
+
+    readonly users$ = this.userId.valueChanges.pipe(
+        distinctUntilChanged(),
+        debounceTime(300),
+        switchMap(e => this.uow.core.users.autoComplete(e).pipe(
+            catchError(this.uow.handleError),
+            map(e => e as User[]),
+        )),
+    );
 
     readonly viewInitDone = new Subject<void>();
     readonly dataSource: Signal<(Operation)[]> = toSignal(this.viewInitDone.pipe(
@@ -105,23 +121,17 @@ export class OperationComponent implements AfterViewInit {
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
-            this.operationType.value === '' ? '*' : this.operationType.value,
-            this.accountId.value,
-            // this.accountDistId.value,
+            +this.userId.value || 0,
+            +this.accountId.value || 0,
         ]),
         tap(e => this.isLoadingResults = true),
         switchMap(e => this.uow.core.operations.getList(e).pipe(
             catchError(this.uow.handleError),
             tap(e => this.totalRecords = e.count),
-            tap(e => {
-                this.accounts.set((e as any).accounts);
-                this.clientIdResult.set(this.accounts().length > 0 ? this.accounts().at(0).user_id : 0);
-            }),
             map(e => e.list.map(a => {
-                (a.accountCredit as any).border = a.accountCredit.user_id === this.clientIdResult();
-                (a.accountDebit as any).border = a.accountDebit.user_id === this.clientIdResult();
+                (a.accountCredit as any).value = a.accountCredit.user_id === this.userId.value ? 'credit' : null;
+                (a.accountDebit as any).value = a.accountDebit.user_id === this.userId.value ? 'debit' : null;
                 return a;
-
             })),
         )),
         tap(e => this.isLoadingResults = false),
@@ -136,7 +146,7 @@ export class OperationComponent implements AfterViewInit {
     }
 
     reset() {
-        this.operationType.setValue('');
+        this.userId.setValue(null);
         this.accountId.setValue(0);
 
         this.update.next(0);
