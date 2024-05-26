@@ -90,16 +90,17 @@ export class OperationComponent implements AfterViewInit {
         switchMap(_ => this.uow.core.accounts.get$.pipe(
             catchError(this.uow.handleError),
         )),
-        map(list => list.filter(e => +e.user_id === +this.userId.value)),
+        map(list => list.filter(e => +e.user_id === +this.userId.value?.id )),
     );
 
 
-    readonly userId = new FormControl<any>(this.uow.session.user()?.id || null);
+    readonly userId = new FormControl<User | string | any>(this.isAdmin() ? null : (this.uow.session.user() || null));
     readonly accountId = new FormControl(0);
 
     readonly users$ = this.userId.valueChanges.pipe(
         distinctUntilChanged(),
         debounceTime(300),
+        filter(e => typeof e === 'string'),
         switchMap(e => this.uow.core.users.autoComplete(e).pipe(
             catchError(this.uow.handleError),
             map(e => e as User[]),
@@ -121,7 +122,7 @@ export class OperationComponent implements AfterViewInit {
             this.paginator?.pageSize ?? 10,
             this.sort?.active ? this.sort?.active : 'id',
             this.sort?.direction ? this.sort?.direction : 'desc',
-            +this.userId.value || 0,
+            +this.userId.value?.id || 0,
             +this.accountId.value || 0,
         ]),
         tap(e => this.isLoadingResults = true),
@@ -129,8 +130,8 @@ export class OperationComponent implements AfterViewInit {
             catchError(this.uow.handleError),
             tap(e => this.totalRecords = e.count),
             map(e => e.list.map(a => {
-                (a.accountCredit as any).value = a.accountCredit.user_id === this.userId.value ? 'credit' : null;
-                (a.accountDebit as any).value = a.accountDebit.user_id === this.userId.value ? 'debit' : null;
+                (a.accountCredit as any).value = a.accountCredit.user_id === this.userId.value?.id ? 'credit' : null;
+                (a.accountDebit as any).value = a.accountDebit.user_id === this.userId.value?.id ? 'debit' : null;
                 return a;
             })),
         )),
@@ -140,6 +141,18 @@ export class OperationComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.viewInitDone.next();
     }
+
+    isString = (e) => typeof e === 'string' || typeof e === 'number';
+
+    display = (e: any) => {
+        console.warn(e);
+        return this.isString(e) || !!!e ? e : `${e?.firstname} ${e?.lastname} (CIN: ${e?.cin})` ?? ''
+    };
+
+    test(e) {
+        console.warn(e);
+    }
+
 
     trackById(index: number, item: any): number {
         return item.id; // Assuming "id" is a unique identifier for each item

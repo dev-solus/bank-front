@@ -20,9 +20,11 @@
                                      matInput
                                      [formControl]="userId"
                                      [matAutocomplete]="auto">
-                              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                                @for (option of users$ | async; track option) {
-                                  <mat-option [value]="option">{{option}}</mat-option>
+                              <mat-autocomplete (optionSelected)="search()" [displayWith]="display" autoActiveFirstOption #auto="matAutocomplete">
+                                @for (e of users$ | async; track e.id) {
+                                  <mat-option [value]="e">
+                                    {{e.firstname}} {{e.lastname}} (CIN: {{e.cin}})
+                                </mat-option>
                                 }
                               </mat-autocomplete>
                             </mat-form-field>
