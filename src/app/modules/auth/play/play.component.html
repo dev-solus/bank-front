@@ -1,0 +1,16 @@
+
+<div class="flex flex-col gap-10 w-full">
+
+
+    <div>
+        <button (click)="setViewport('small')">Small</button>
+        <button (click)="setViewport('medium')">Medium</button>
+        <button (click)="setViewport('large')">Large</button>
+     </div>
+
+
+  <iframe class="w-full h-screen border" [ngClass]="viewportClass" [srcdoc]="iframeContent">
+</iframe>
+
+</div>
+

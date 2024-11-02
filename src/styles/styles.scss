@@ -217,3 +217,9 @@ body::-webkit-scrollbar-thumb:hover {
         max-width: 1350px;
     }
 }
+
+// debug
+*, *::before, *::after {
+    box-sizing: border-box;
+    outline: 1px solid lime;
+}

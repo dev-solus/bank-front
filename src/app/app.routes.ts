@@ -29,6 +29,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             { path: '', pathMatch: 'full', redirectTo: 'sign-in' },
+            { path: 'play', loadChildren: () => import('app/modules/auth/play/play.routes') },
             { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes') },
             // { path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes') },
             // { path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes') },
